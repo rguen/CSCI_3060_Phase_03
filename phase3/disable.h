@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <stdlib.h>
+#include <fstream>
 #include "login.h"
 #include "account.h"
 #include "miscFunctions.h"

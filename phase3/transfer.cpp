@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdlib>
 #include <stdlib.h>
+#include <fstream>
 #include "transfer.h"
 #include "login.h"
 #include "account.h"
@@ -9,9 +10,11 @@
 
 using namespace std;
 
-
+// Basic constructor for the transfer class
 transfer::transfer() {}
 
+// This function determines what type of transaction the current session
+// is, and updates the private class variable adminTransaction
 void transfer::setSession(login session) {
 
     if (session.getLoginType() == "Admin") {
@@ -22,10 +25,16 @@ void transfer::setSession(login session) {
     }
 }
 
+
+// This function allows the user to set the account sending money in a transaction
 void transfer::setAccountFrom(vector<string> lType, login session, string accountNum, string name) {
     int accountNumber;
     string holderName;
 
+    // If the current session is an admin transaction, the admin user is prompted to input a holder name
+    // along with an account number while setting an account thats sending money. If the current session
+    // is a standard transaction, the standard user is only prompted to enter an account number while
+    // setting an account thats sending money.
     if (name != "") {
         cout << "Please enter the account holder's name:" << endl;
         holderName = name;
@@ -39,6 +48,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
             }
         }
 
+        // If the name is not found, continue to the next transaction
         if (foundName == false) {
             cout << "Error: Name not found" << endl;
             tChooser(lType, session);
@@ -47,7 +57,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
         cout << "Please enter the account number: " << endl;
         accountNumber = stoi(accountNum);
 
-        // Seeing if the account exists in the standardAccount vector
+        // Seeing if the account number exists in the standardAccount vector under the holder's name
         bool foundNum = false;
         for (int i = 0; i < standardAccounts.size(); i++) {
             if ((holderName == standardAccounts[i].getAccountName()) &&
@@ -59,6 +69,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
             }
         }
 
+        // If the account number is not found, continue to the next transaction
         if (foundNum == false) {
             cout << "Error: Account holder’s name does not match with account number" << endl;
             session.updateSessionCounter();
@@ -79,6 +90,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
             }
         }
 
+        // If the account number is not found, continue to the next transaction
         if (found == false) {
             cout << "Error: Account number invalid" << endl;
             tChooser(lType, session);
@@ -86,6 +98,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
     }
 }
 
+// This function allows the user to set the account receiving money in a transaction
 void transfer::setAccountTo(vector<string> lType, login session, string accountNum) {
 
     int accountNumber;
@@ -109,6 +122,7 @@ void transfer::setAccountTo(vector<string> lType, login session, string accountN
             }
         }
 
+        // If the account number is not found, continue to the next transaction
         if (found == false) {
             cout << "Error: Account number invalid" << endl;
             tChooser(lType, session);
@@ -116,12 +130,15 @@ void transfer::setAccountTo(vector<string> lType, login session, string accountN
     }
 }
 
+// This function allows the user to set the amount to be transferred in a transaction
 void transfer::setAmount(vector<string> lType, login session, string setAmount) {
     float amount;
 
     cout << "Please enter the amount to transfer: " << endl;
     amount = stof(setAmount);
 
+    // Checking to see if the set amount to transfer is valid. If the amount is invalid,
+    // continue to the next transaction
     if (adminTransaction == true  && amount > 0.00) {
         this->transferAmount = amount;
         cout << "Valid amount" << endl;
@@ -144,13 +161,17 @@ void transfer::setAmount(vector<string> lType, login session, string setAmount) 
     }
 }
 
+// This function allows the user to conduct a transfer transaction
 void transfer::conductTransfer(vector<string> lType, login session) {
 
     cout << "Transfer selected" << endl;
-    //cout << lType[session.getSessionCounter()] << endl;
 
+    // Setting the variable adminTransaction to either Standard or Admin,
+    // depending on the current session type
     setSession(session);
     
+    // Setting the account that is sending money in the current transaction,
+    // if the user hasn't cancelled the transaction
     if (lType[session.getSessionCounter()] != "cancelTransfer") {
         if (adminTransaction == true) {
             string name = lType[session.updateSessionCounter()];
@@ -163,14 +184,20 @@ void transfer::conductTransfer(vector<string> lType, login session) {
         }
     }
 
+    // Setting the account that is receiving money in the current transaction,
+    // if the user hasn't cancelled the transaction
     if (lType[session.getSessionCounter()] != "cancelTransfer") {
         setAccountTo(lType, session, lType[session.updateSessionCounter()]);
     }
 
+    // Setting the amount that is being transferred in the current transaction,
+    // if the user hasn't cancelled the transaction
     if (lType[session.getSessionCounter()] != "cancelTransfer") {
         setAmount(lType, session, lType[session.updateSessionCounter()]);
     }
 
+    // Conducting the transfer between the two accounts and updating their balances, if the user hasn't
+    // cancelled the transaction and if the transation is between two valid accounts
     if (lType[session.getSessionCounter()] != "cancelTransfer") {
         if (accountTo->getAccountStatus() != "D" && accountFrom->getAccountStatus() != "D") {
             float accountFromBalance = accountFrom->getBalance();
@@ -179,8 +206,8 @@ void transfer::conductTransfer(vector<string> lType, login session) {
             if ((accountFromBalance - transferAmount) >= 0.00 && (accountToBalance + transferAmount) >= 0.00) {
                 accountFrom->setBalance(accountFromBalance - transferAmount);
                 accountTo->setBalance(accountToBalance + transferAmount);
-                // saveLogs();
                 cout << "Transfer successful" << endl;
+                saveLogs();
             }
             else if ((accountFromBalance - transferAmount) < 0.00 && (accountToBalance + transferAmount) >= 0.00) {
                 cout << "Error: Transferring account must have a balance of at least $0.00 after interaction" << endl;
@@ -205,23 +232,20 @@ void transfer::conductTransfer(vector<string> lType, login session) {
     }
 }
 
-/*
 void transfer::saveLogs() {
-    FILE file = "transfer_" + transactionNumber + ".etf";
     fstream stream;
-    stream.open(file, ios::out);
+    stream.open("transferLogs.etf", ios::out);
     if (!stream) { exit(1); }
     else {
-        stream << "02_" << accountFrom.getAccountName() << "_"
-               << accountFrom.getAccountNumber() << "_-" << transferAmount
+        stream << "02_" << accountFrom->getAccountName() << "_"
+               << accountFrom->getAccountNumber() << "_-" << transferAmount
                << "___"
                
                << endl
 
-               << "02_" << accountTo.getAccountName() << "_"
-               << accountTo.getAccountNumber() << "_+" << transferAmount
+               << "02_" << accountTo->getAccountName() << "_"
+               << accountTo->getAccountNumber() << "_+" << transferAmount
                << "___" << endl;
     }
-    close(file);
+    stream.close();
 }
-*/
