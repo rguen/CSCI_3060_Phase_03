@@ -12,14 +12,20 @@ using namespace std;
 
 
 void login::loginType(vector<string> lType,login session){
+    //Checks to see the session Type
+    /*Also calls updateSessionCounter to keep track of where 
+    in the script the user is at*/
     int temp = session.updateSessionCounter();
     string transaction = lType[temp];
     if(transaction == "Login"){
         cout << "Select Session Type: Admin or Standard"<<endl;
         string sessionType = lType[session.updateSessionCounter()];
+        //If the session is Admin the admin login will be called
         if(sessionType == "Admin"){
             session.setLoginType(sessionType);
             adminLogin(lType,session);
+        //If the session is Standard the standard login will be called
+
         }else if(sessionType == "Standard"){
             session.setLoginType(sessionType);
             standardLogin(lType,session);
@@ -40,6 +46,8 @@ void login::standardLogin(vector<string> lType,login session){
  string password = lType[session.updateSessionCounter()];
  string name = lType[session.updateSessionCounter()];
  string loginType = session.getLoginType();
+ //Checks to see if this a standard session
+
  if(loginType == "Standard"){
      cout << "Enter Account Number"<< endl;
      session.setANumber(number);
@@ -47,6 +55,10 @@ void login::standardLogin(vector<string> lType,login session){
      session.setAPassword(password);
      cout << "Enter Account Holders Name"<< endl;
      session.setAName(name);
+
+     //Checks to see if the account exists
+     //If its true then itll call transaction chooser
+     //else it will say login failed and will close the session
      if(standardVerification(session) == true){
         cout<<"Login Successful"<<endl;
         tChooser(lType,session);
@@ -65,11 +77,15 @@ void login::adminLogin(vector<string> lType,login session){
  string number = lType[session.updateSessionCounter()];
  string password = lType[session.updateSessionCounter()];
  string loginType = session.getLoginType();
+ //Checks to see if the session is an Admin session
  if(loginType == "Admin"){
      cout << "Enter Account Number"<< endl;
      session.setANumber(number);
      cout << "Enter Account Password"<< endl;
      session.setAPassword(password);
+     //Checks to see if the account exists
+     //If its true then itll call transaction chooser
+     //else it will say login failed and will close the session
      if(adminVerification(session)==true){
         cout<<"Login Successful"<<endl;
         tChooser(lType,session);

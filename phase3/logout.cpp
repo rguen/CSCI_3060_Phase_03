@@ -8,13 +8,15 @@
 using namespace std;
 
 void logout::accLogout(vector<string> lType,login session){
-    
+    //Checks to see if the next part of the script is equal to white space
+    //If its true then itll recall loginType(This is so when a user needs to
+    //relog they can easily do so)
     if (lType[session.getSessionCounter()+1] != "") {
         cout << "Logout Successful" << endl;
         session.loginType(lType,session);
         
     }
-    else {
+    else {//If there is nothing after the Login part in a Script the code ends
         cout << "Logout Successful " << endl;
         exit(0);
     }
