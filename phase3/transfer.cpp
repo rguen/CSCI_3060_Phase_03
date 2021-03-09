@@ -26,7 +26,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
     int accountNumber;
     string holderName;
 
-    if (holderName != "") {
+    if (name != "") {
         cout << "Please enter the account holder's name:" << endl;
         holderName = name;
 
@@ -61,6 +61,7 @@ void transfer::setAccountFrom(vector<string> lType, login session, string accoun
 
         if (foundNum == false) {
             cout << "Error: Account holder’s name does not match with account number" << endl;
+            session.updateSessionCounter();
             tChooser(lType, session);
         }
     }
