@@ -9,7 +9,7 @@ using namespace std;
 class logout{
 public:
 	void accLogout(vector<string> lType,login session);
-    void saveLog();
+    void save(login session);
 	
 
 };

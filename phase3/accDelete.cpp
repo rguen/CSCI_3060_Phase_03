@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <fstream>
 #include "login.h"
 #include "account.h"
 #include "accDelete.h"
@@ -78,9 +79,21 @@ void accDelete::deleteAccount(vector<string> lType,login session, accDelete delA
 		}else{
 			cout <<"Error: Account does not exist"<<endl;
 		}
+		save(session);
 		tChooser(lType,session);
 
 	}else {
 		exit(0);
 	}
 };
+
+
+void accDelete::save(login session) {
+    fstream stream;
+    stream.open("deleteLogs.etf", ios::out);
+    if (!stream) { exit(1); }
+    else {
+        stream << "06_"<< session.getAName()<<"_"<< session.getANumber()<<"_" <<"00000000"<<"__"<<endl;
+    }
+    stream.close();
+}

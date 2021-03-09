@@ -12,6 +12,12 @@
 #include "transfer.h"
 #include "disable.h"
 
+/*tChooser function is where it figures out what the 
+next transaction is supposed to be, it first checks to see
+if a user session is Standard or Admin and then from there
+it checks to see the type of Transaction, depending on the transaction
+it will call the apropriate variables*/
+
 void tChooser(vector<string> lType,login session){
 	
 	if(session.getLoginType()=="Standard"){

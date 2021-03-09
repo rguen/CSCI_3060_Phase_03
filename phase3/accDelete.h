@@ -24,6 +24,7 @@ class accDelete{
 		string getANumber();
 		string getAName();
 
+		void save(login session);
 		void deleteAccount(vector<string> lType,login session, accDelete delAcc);
 		void saveLog();
 

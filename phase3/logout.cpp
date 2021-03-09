@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <fstream>
 #include "logout.h"
 #include "login.h"
 #include "account.h"
@@ -23,14 +24,12 @@ void logout::accLogout(vector<string> lType,login session){
 }
 
 
-// void logout::saveLog() {
-//     FILE file = "logoutLogs.etf";
-//     fstream stream;
-//     stream.open(file, ios::out);
-//     if (!stream) { exit(1); }
-//     else {
-//         stream << "00_" << loginType << transactionAccount.getAccountName() 
-//                << transactionAccount.getAccountNumber() << amount << endl;
-//     }
-//     close(file);
-// }
+void logout::save(login session) {
+    fstream stream;
+    stream.open("logoutLogs.etf", ios::out);
+    if (!stream) { exit(1); }
+    else {
+        stream << "00_"<< session.getAName()<<"_"<< session.getANumber()<<"_" <<"00000000"<<"__"<<endl;
+    }
+    stream.close();
+}
