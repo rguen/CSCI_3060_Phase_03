@@ -135,7 +135,7 @@ void changePlan::save() {
     stream.open("changeplanLogs.etf", ios::out);
     if (!stream) { exit(1); }
     else {
-        stream << "08_" << getLogginType() << getAccountName() <<"_"
+        stream << "08_"  << getAccountName() <<"_"
                << getAccountNumber()<<"_" << "00000000"<<"_"<< getpaymentType()<< endl;
     }
     stream.close();

@@ -39,7 +39,7 @@ void payBill::save() {
     stream.open("paybillLogs.etf", ios::out);
     if (!stream) { exit(1); }
     else {
-        stream << "03_" << getLogginType() <<"_"<< getAccountName()<<"_"
+        stream << "03_" <<"_"<< getAccountName()<<"_"
                << getAccountNumber()<<"_" << getAmount()<<"_"<< getCompany()<< endl;
     }
     stream.close();
